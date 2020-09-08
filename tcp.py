@@ -1,6 +1,17 @@
 import socket
 
 
+def bcd2int(bcd):
+    digit=0
+    ret=0
+
+    digit = (bcd >> 4) & 0x0F
+    ret = ret * 10 + digit;
+
+    digit = bcd & 0x0F
+    ret = ret * 10 + digit
+    return ret
+
 TCP_IP = '10.238.10.108'
 TCP_PORT = 9000 #9762
 BUFFER_SIZE = 1024
@@ -22,8 +33,8 @@ print("------------------------------------")
 print("pos0: ",data[0])
 print("pos1: ",data[1])
 print("dia: ",data[2])
-print("mes: ",data[3])
-print("ano: ",data[4])
+print("mes: ",bcd2int(data[3]))
+print("ano: ",bcd2int(data[4]))
 print("hora: ",data[5])
 print("min: ",data[6])
 print("seg: ",data[7])
