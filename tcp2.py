@@ -45,8 +45,7 @@ def checksum(frameHex):
     return frameEnvioHex[tamFrameHex]
 
 MESSAGE = bytearray(b'\x00\x0C')
-print(enviaComando(MESSAGE))
-return frameEnvioHex
+print(checksum(MESSAGE))
 
 
 
