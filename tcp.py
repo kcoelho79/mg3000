@@ -59,13 +59,14 @@ def enviarComando(comando):
     data = s.recv(BUFFER_SIZE)
     s.close()
     print(len(data))
+    print(data)
     return data
 
 
-#TCP_IP = '10.238.10.108'
-TCP_IP = '10.238.10.107'
+#cTCP_IP = '10.238.10.109'
+TCP_IP = '10.238.0.41'
 
-TCP_PORT = 9762 #9762
+TCP_PORT = 9000 #9762
 BUFFER_SIZE = 1024
 #MESSAGE = bytearray(b'\x00\x0C\x0C')
 
@@ -75,5 +76,6 @@ retorno = enviarComando(b'\x53\x54\x58\x00\x03\x00\x5f\x5f\x45\x54\x58')
 #enviarComando(b'\x00\x03\x03')
 print ("retorno : ")
 print(retorno[2])
+
 
 #opcao12(retorno)
