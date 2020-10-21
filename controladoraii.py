@@ -24,6 +24,10 @@ def get_frame_evento(msg,tamanho):
     return frame_evento
 
 def evento(msg):
+    # pegar o byte int e converter para binario (str) hex_to_bin
+    # binario str pegar o range dos bits - cuidado com a ordem big - little
+    # converter para int usando int(b,2)
+    # o valor int comprarar o evento na tabela ou lista
     pass
 
 
