@@ -28,6 +28,11 @@ def evento(msg):
 
 
 def checksum(frameHex):
+    # receber array inteiro
+    # fazer as somas byte a byte valor inteiro
+    # converter inteiro para hex int.to_byte(2,'little')
+    # pegar resultado[0]
+
     cs = 0
     msg = frameHex[3:]
     for i in range(len(msg)):
