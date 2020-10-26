@@ -18,6 +18,14 @@ def Byte_to_Hex(frame):
         frameHex.append(hex(frame[i]))
     return frameHex
 
+def fmtByte_to_Str(byte):
+    # formata Byte para  Str
+    tamanho = len(byte)
+    fstr= ''
+    for i in range(tamanho):
+        fstr += hex(byte[i])[2:] + ' '
+    return fstr
+
 
 def Hex_to_Bin(hexnumber, num_of_bits=8):
     base=16
@@ -34,5 +42,32 @@ def bcd2int(bcd):
     ret = ret * 10 + digit
     return ret
 
+def tobit(numero,msb,lsb):
+    #recebe int e tranforma em bits
 
+    bits = bin(numero)[2:].zfill(8)
+    print(bits)
+    #converte o index 0 para msb (inverte)
+    istart = 7 - msb
+    iend = (7 - lsb) + 1
+    print(bits[istart:iend])
+    return bits[istart:iend]
 
+def bits2int(b, msb, lsb):
+    #Extrai o range de bits (entre 7 e 0) de um determinado byte, retorna valor decimal
+    #msb = Bit +significativo Bit inicio range, 
+    #lsb = Bit -significativo Bit fim range
+
+    bits = bin(b)[2:].zfill(8)  # transforma 1 byte em 8 bits
+
+    if (msb < 8) and (lsb <8):
+        if (msb <= lsb): # tipo little 
+            return int(bits[msb:lsb+1],2)
+
+        elif (msb >= lsb): # tipo Big
+            #inverte o index para o tipo big MSB esquerda para direita
+            msb = 7 - msb
+            lsb = 7 - lsb
+            return int(bits[msb:lsb+1],2)
+    else:
+        return 'erro'

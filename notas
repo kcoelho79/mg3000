@@ -1,0 +1,46 @@
+ b'STX\x00\x15\x00t\x00(\x11\x00\x03\x00\x00F\x89\n\t\x13\x06\x02\x01\x00\x00T\x02ETX'
+
+53 54 58 00 15 00 74 00 28 11 00 03 00 00 46 89 0a 09 13 06 02 01 00 00 54 02 45 54 58
+
+cabecahlo       53 54 58 
+tamanho         00 15 
+comando         00 74 
+retorno         00 
+cntAtual        28
+frame evento    11 00 03 00 00 46 89 0a 09 13 06 02 01 00 00 54 02 
+rodape          45 54 58
+
+ 00 + 74 + <retorno> + <cntAtual> + <frame de evt. (16 bytes)> + cs      [21 bytes]
+
+
+ frame evento    11 00 03 00 00 46 89 0a 09 13 06 02 01 00 00 54 02 
+
+ b1     evento
+ b1     setor
+ b2     mode operacao
+ b2     numero_dispo
+ b3     nmero_serialserial    
+ b3     serial
+ b4     serial
+ b5     serial
+ b6     serial
+ b7
+ b8
+ b9
+ b10
+ b11
+ b12
+ b13
+ b14
+ b15
+ b16
+
+
+pego o byte do evento
+movimento para esquerda para trasnformar os bits de 8 para 5 por exemplo
+
+
+bin(evento[0] <<3)[2:].zfill(8)
+
+exemplo template para recebimento mensagem
+mensagem = frame_evento['byte1'].bits[4,3]
