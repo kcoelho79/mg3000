@@ -30,12 +30,46 @@ def evento(frame):
         't_disp_Anviz'          : tDispAnviz(frameEvt[2]),
         'tipo_dispositivo'      : tipoDispositivo(frameEvt[2]),
         'numero_serial'         : numeroSerial(frameEvt[3:7+1]),
-        'hora_data'             : hora_data(frameEvt[8:13+1])
+        'hora_data'             : horaData(frameEvt[8:13+1]),
+        'nivel'                 : nivel(frameEvt[14]),
+        'bateria'               : bateria(frameEvt[15]),
+        'leitora_acionada'      : leitoraAcionada(frameEvt[15]),        
+        'flag_evento'           : flagEvento(frameEvt[15])
     }
 
     return msgEvt
 
-def hora_data(byte):
+def leitoraAcionada(byte):
+    leitora = convert.bits2int(byte,1,2) # bit1:2
+
+    lista_leitora = [
+        'leitora Acionada 01',
+        'leitora Acionada 02',
+        'leitora Acionada 03',
+        'leitora Acionada 04'
+    ]
+
+    return lista_leitora[leitora]    
+
+
+def bateria(byte):
+    bateria = convert.onebit(byte,0)
+    print("BATERIA ====",bateria)
+    if bateria == 0:
+        return 'bateria OK'
+    else:
+        return 'bateria fraca'
+
+
+def flagEvento(byte):   
+    pass
+    #infoEvento = convert.bits2int(byte,4,7)
+
+        
+def nivel(byte):
+    pass
+
+def horaData(byte):
 
     print("tamanho",len(byte))
     print(convert.fmtByte_to_Str(byte))

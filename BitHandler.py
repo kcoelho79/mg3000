@@ -53,6 +53,14 @@ def tobit(numero,msb,lsb):
     print(bits[istart:iend])
     return bits[istart:iend]
 
+def onebit(b,i,ordem='crescente'):
+    bits = bin(b)[2:].zfill(8)
+    if ordem =='crescente':
+        return int(bits[i],2)
+    elif ordem == 'decrescente':
+        invertida = 7 - i
+        return int(bits[invertida],2)
+
 def bits2int(b, msb, lsb):
     #Extrai o range de bits (entre 7 e 0) de um determinado byte, retorna valor decimal
     #msb = Bit +significativo Bit inicio range, 
