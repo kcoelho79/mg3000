@@ -33,11 +33,157 @@ def evento(frame):
         'hora_data'             : horaData(frameEvt[8:13+1]),
         'nivel'                 : nivel(frameEvt[14]),
         'bateria'               : bateria(frameEvt[15]),
-        'leitora_acionada'      : leitoraAcionada(frameEvt[15]),        
-        'flag_evento'           : flagEvento(frameEvt[15])
+        'leitora_acionada'      : leitoraAcionada(frameEvt[15]), 
+        'evento_lido'           : eventoLido(frameEvt[15]),       
+        'info_evento'           : infoEvento(frameEvt[15],frameEvt[0])
     }
 
     return msgEvt
+
+def infoEvento(b_info_evt,b_tipo_evt):
+    valor_evento = (b_tipo_evt & 0x1f)
+    valor_info_evento = convert.bits2int(b_info_evt,4,7)
+
+             
+    lista_tipo_eventos= [
+           [
+                'SUB_LOG_ACIONAMENTO_ENTRADA',
+                'SUB_LOG_ACIONAMENTO_SAIDA',
+                'SUB_LOG_ACIONAMENTO_BOTAO_1',
+                'SUB_LOG_ACIONAMENTO_BOTAO_2',
+                'SUB_LOG_ACIONAMENTO_BOTAO_3',
+                'SUB_LOG_ACIONAMENTO_BOTAO_4',
+                'SUB_LOG_AGUARDANDO_SEGUNDA_VALIDACAO'],
+           [
+                'SUB_LOG_PASSAGEM_ENTRADA_1',
+                'SUB_LOG_PASSAGEM_SAIDA_1',
+                'SUB_LOG_PASSAGEM_ENTRADA_2',
+                'SUB_LOG_PASSAGEM_SAIDA_2',
+                'SUB_LOG_PASSAGEM_ENTRADA_3',
+                'SUB_LOG_PASSAGEM_SAIDA_3',
+                'SUB_LOG_PASSAGEM_ENTRADA_4',
+                'SUB_LOG_PASSAGEM_SAIDA_4',
+                'SUB_LOG_PASSAGEM_TOUT',
+                'SUB_LOG_PASSAGEM_SAIDA_LIVRE',
+                'SUB_LOG_PASSAGEM_BOTAO_1',
+                'SUB_LOG_PASSAGEM_BOTAO_2',
+                'SUB_LOG_PASSAGEM_BOTAO_3',
+                'SUB_LOG_PASSAGEM_BOTAO_4',
+                'SUB_LOG_PASSAGEM_ENTRADA_APB_DESLIGADO',
+                'SUB_LOG_PASSAGEM_SAIDA_APB_DESLIGADO'
+                ],
+
+           [    '2 SEM USO'],
+
+           [    'SUB_LOG_HABILITACAO_SEM_VAGAS'],
+
+           [    '4 SEM USO'],
+
+           [
+                'SUB_LOG_ACIONAMENTO_REMOTO_OK',
+                'SUB_LOG_ACIONAMENTO_REMOTO_ERRO',
+                'SUB_LOG_ACIONAMENTO_REMOTO_COM_ID_OK',
+                'SUB_LOG_ACIONAMENTO_REMOTO_COM_ID_ERRO',
+                'SUB_LOG_ACIONAMENTO_REMOTO_RELE_5',
+                'SUB_LOG_ACIONAMENTO_REMOTO_RELE_6'
+                ],
+
+           [
+                'SUB_LOG_ACIONAMENTO_REMOTO_OK',
+                'SUB_LOG_ACIONAMENTO_REMOTO_ERRO',
+                'SUB_LOG_ACIONAMENTO_REMOTO_COM_ID_OK',
+                'SUB_LOG_ACIONAMENTO_REMOTO_COM_ID_ERRO',
+                ],
+
+            [   'SUB_LOG_INCONSISTENCIA_ENTRE_BASES_DE_DADOS'],
+
+            [   '8 SEM USO'],
+
+            [
+                'SUB_LOG_PANICO',
+                'SUB_LOG_PANICO_NAO_ATENDIDO',
+                'SUB_LOG_PANICO_CANCELADO',
+                'SUB_LOG_PANICO_2X_CARTAO',
+                'SUB_LOG_PANICO_IMEDIATO',
+                'SUB_LOG_PANICO_TEMPORIZADO',
+                'SUB_LOG_PANICO_DISPOSITIVO'
+                ],
+
+            [   '10 SEM USO'],
+
+            [   '11 SEM USO'],
+
+            [
+                'SUB_LOG_ERRO_GRAVAÇÃO_BIOMETRIA_1',
+                'SUB_LOG_ERRO_GRAVAÇÃO_BIOMETRIA_2',
+                'SUB_LOG_ERRO_GRAVAÇÃO_BIOMETRIA_3',
+                'SUB_LOG_ERRO_GRAVAÇÃO_BIOMETRIA_4',
+                'SUB_LOG_ATUALIZAÇÃO_CANCELADA_ERROS'
+                ],
+
+            [   '13 SEM USO'],
+
+            [   '14 SEM USO'],
+
+            [
+                'SUB_LOG_NAO_CADASTRADO',
+                'SUB_LOG_LEITORA_EXPEDIDORA'],
+
+            [
+                'SUB_LOG_DUPLA_PASSAGEM_ENTRADA_1',
+                'SUB_LOG_DUPLA_PASSAGEM_SAIDA_1',
+                'SUB_LOG_DUPLA_PASSAGEM_ENTRADA_2',
+                'SUB_LOG_DUPLA_PASSAGEM_SAIDA_2',
+                'SUB_LOG_DUPLA_PASSAGEM_ENTRADA_3',
+                'SUB_LOG_DUPLA_PASSAGEM_SAIDA_3',
+                'SUB_LOG_DUPLA_PASSAGEM_ENTRADA_4',
+                'SUB_LOG_DUPLA_PASSAGEM_SAIDA_4'],
+
+            [
+                '0=VALIDO',
+                '1=INVALIDO_NAO_CADASTRADO',
+                '2=INVALIDO_LEITORA_COFRE',
+                '3=INVALIDO_ANTI_PASSBACK',
+                '4=INVALIDO_SEM_CREDITOS',
+                '5=INVALIDO_DATA_VALIDADE_EXPIRADA',
+                '6=INVALIDO_TEMPO_ANTICARONA',
+                '7=INVALIDO_LEITORA_NAO_HABILITADA',
+                '8=INVALIDO_FERIADO',
+                '9=INVALIDO_JORNADA_TURNO',
+                '10=INVALIDO_SEM_VAGAS_NIVEL',
+                '11=INVALIDO_LEITORA_INIBIDA'
+                ],
+
+            [   '18 SEM USO'],
+
+            [
+                'SUB_LOG_ALARME_ED_1',
+                'SUB_LOG_ALARME_ED_2',
+                'SUB_LOG_ALARME_ED_3',
+                'SUB_LOG_ALARME_ED_4',
+                'SUB_LOG_ARROMBAMENTO1',
+                'SUB_LOG_ARROMBAMENTO2',
+                'SUB_LOG_ARROMBAMENTO3',
+                'SUB_LOG_ARROMBAMENTO4'],
+
+            
+            [   '20 SEM USO'],
+
+            [
+                'SUB_LOG_ATUALIZACAO_FALHA_DE_GRAVACAO',
+                'SUB_LOG_ATUALIZACAO_CONCLUIDA_COM_SUCESSO',
+                'SUB_LOG_ATUALIZACAO_SERIAL_FORA_DO_LIMITE'
+
+            ]
+
+        ]
+    return lista_tipo_eventos[valor_evento][valor_info_evento]
+
+def eventoLido(byte):
+    if conver.onebit(byte,3) == 0:
+        return 'Comando ainda nao lido por comando PC'
+    else:
+        return 'evento já lido através de comando PC'
 
 def leitoraAcionada(byte):
     leitora = convert.bits2int(byte,1,2) # bit1:2
@@ -59,12 +205,6 @@ def bateria(byte):
         return 'bateria OK'
     else:
         return 'bateria fraca'
-
-
-def flagEvento(byte):   
-    pass
-    #infoEvento = convert.bits2int(byte,4,7)
-
         
 def nivel(byte):
     pass
