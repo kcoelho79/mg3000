@@ -1,1 +1,9 @@
- b'STX\x00\x15\x00t\x00(\x11\x00\x03\x00\x00F\x89\n\t\x13\x06\x02\x01\x00\x00T\x02ETX'
+
+
+received data: b'STX\x00\x15\x00t\x002\x00\x00\x03\x00\x00\x0c\xfc\xfc\r\x1e\n\x1b\n\x14\x00\x161ETX'
+d 1e a 1b a 14
+{'tipo_evt': 'dispositivo acionado', 'setor': 0, 'modo_operacao': 'MODO CATRACA', 'numero_dispositivo': 0, 't_disp_Anviz': 'NAO IMPLEMENTADO', 'tipo_dispositivo': '--> DISP_CT', 'numero_serial': '0 0 c fc fc ', 'hora_data': 'data: 21/10/14 13:24', 'nivel': None, 'bateria': 'bateria OK', 'leitora_acionada': 'leitora Acionada 01', 'evento_lido': 'evento já lido através de comando PC', 'info_evento': 'SUB_LOG_AGUARDANDO_SEGUNDA_VALIDACAO'}
+received data: b'STX\x00\x15\x00t\x002\x01\x00\x03\x00\x00\x0c\xfc\xfc\r\x1e\x0f\x1b\n\x14\x00\x86\xa7ETX'
+d 1e f 1b a 14
+{'tipo_evt': 'Passagem', 'setor': 0, 'modo_operacao': 'MODO CATRACA', 'numero_dispositivo': 0, 't_disp_Anviz': 'NAO IMPLEMENTADO', 'tipo_dispositivo': '--> DISP_CT', 'numero_serial': '0 0 c fc fc ', 'hora_data': 'data: 21/10/14 13:24', 'nivel': None, 'bateria': 'bateria fraca', 'leitora_acionada': 'leitora Acionada 01', 'evento_lido': 'Comando ainda nao lido por comando PC', 'info_evento': 'SUB_LOG_PASSAGEM_ENTRADA_4'}
+
