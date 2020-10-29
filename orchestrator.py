@@ -7,7 +7,13 @@ import BitHandler as convert
 # recebe comando
 #
 
-data = b'STX\x00\x15\x00t\x00(\x11\x00\x03\x00\x00F\x89\n\t\x13\x06\x02\x01\x00\x00T\x02ETX'
+# original
+#data = b'STX\x00\x15\x00t\x00(\x11\x00\x03\x00\x00F\x89\n\t\x13\x06\x02\x01\x00\x00T\x02ETX'
+
+#data =  b'STX\x00\x15\x00t\x00(\x11\x00\x03\x00\x00F\x89\n\x15\t\x1b\x04\x01\x00\x00P\x17ETX'
+
+data = b'STX\x00\x15\x00t\x00(\x11\x00\x03\x00\x00F\x89\n\x15\x11\x0f\x04\x01\x00\x00R\x15ETX'
+
 
 def recebeMensagem(fbytes):
     #particiona fbytes
@@ -37,6 +43,8 @@ def evento(frame):
         'evento_lido'           : eventoLido(frameEvt[15]),       
         'info_evento'           : infoEvento(frameEvt[15],frameEvt[0])
     }
+
+    print (msgEvt)
 
     return msgEvt
 
@@ -180,7 +188,7 @@ def infoEvento(b_info_evt,b_tipo_evt):
     return lista_tipo_eventos[valor_evento][valor_info_evento]
 
 def eventoLido(byte):
-    if conver.onebit(byte,3) == 0:
+    if convert.onebit(byte,3) == 0:
         return 'Comando ainda nao lido por comando PC'
     else:
         return 'evento já lido através de comando PC'
@@ -200,7 +208,7 @@ def leitoraAcionada(byte):
 
 def bateria(byte):
     bateria = convert.onebit(byte,0)
-    print("BATERIA ====",bateria)
+
     if bateria == 0:
         return 'bateria OK'
     else:
@@ -211,7 +219,8 @@ def nivel(byte):
 
 def horaData(byte):
 
-    print("tamanho",len(byte))
+
+
     print(convert.fmtByte_to_Str(byte))
     hora        = byte[0]
     minuto      = byte[1]

@@ -1,6 +1,6 @@
 import socket
 import controladoraii as Controler
-
+import orchestrator
 
 TCP_IP = '10.238.10.103'
 TCP_PORT = 9767
@@ -18,7 +18,8 @@ while 1:
     if not data: 
         break
     print ("received data:", data)
-    Controler.serializa_frame(data)
+    #Controler.serializa_frame(data)
+    orchestrator.evento(data)
 
     #conn.send(data)  # echo
 conn.close()

@@ -79,3 +79,4 @@ def bits2int(b, msb, lsb):
             return int(bits[msb:lsb+1],2)
     else:
         return 'erro'
+
