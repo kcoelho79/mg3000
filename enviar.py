@@ -48,8 +48,16 @@ def opcao12(data):
 
 # Conexao TCP
 
-def enviarComando(comando):
-    FrameHex = bytearray(comando)
+def enviarComando(comando,payload):
+    #calcula checksum
+    cs = 0
+    for i in range(len(payload -1)):
+        cs = cs + payload[i]
+    cs =
+
+
+
+    FrameHex = comando + payload
     print("soma checksum: ",sum(comando[:-1]))
     tamFrame = (len(comando))
     print("Tamanho do frame: ",tamFrame)
