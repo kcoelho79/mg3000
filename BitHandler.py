@@ -18,12 +18,12 @@ def Byte_to_Hex(frame):
         frameHex.append(hex(frame[i]))
     return frameHex
 
-def fmtByte_to_Str(byte):
+def fmtByte_to_Str(byte,separador=''):
     # formata Byte para  Str
     tamanho = len(byte)
     fstr= ''
     for i in range(tamanho):
-        fstr += hex(byte[i])[2:] + ' '
+        fstr += hex(byte[i])[2:].zfill(2) + separador
     return fstr
 
 
