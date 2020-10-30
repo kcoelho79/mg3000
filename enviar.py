@@ -15,8 +15,9 @@ def enviarComando(payload):
     s.send(frame)
     data = s.recv(BUFFER_SIZE)
     s.close()
-    print(len(data))
-    print("data  retorno :", convert.fmtByte_to_Str(data))
+    #Verifica se retorno comando 80 e retorno = ok
+
+    print("data  retorno :", convert.fmtByte_to_Str(data,separador=' '))
 
 
 
@@ -25,5 +26,4 @@ TCP_IP = '10.238.10.111'
 
 TCP_PORT = 9762
 BUFFER_SIZE = 1024
-
 

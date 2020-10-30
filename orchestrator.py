@@ -26,32 +26,40 @@ def recebeMensagem(fbytes):
 
 def evento(frame):
 
-    # estrutuda de dados
-    frameEvt = frame[9:-3]
-    msgEvt = {
-        'tipo_evt'              : tipoEvento(frameEvt[0]),
-        'setor'                 : setor(frameEvt[0]),
-        'modo_operacao'         : modeOperacao(frameEvt[1]),
-        'numero_dispositivo'    : numeroDispositivo(frameEvt[1]),
-        't_disp_Anviz'          : tDispAnviz(frameEvt[2]),
-        'tipo_dispositivo'      : tipoDispositivo(frameEvt[2]),
-        'numero_serial'         : numeroSerial(frameEvt[3:7+1]),
-        'hora_data'             : horaData(frameEvt[8:13+1]),
-        'nivel'                 : nivel(frameEvt[14]),
-        'bateria'               : bateria(frameEvt[15]),
-        'leitora_acionada'      : leitoraAcionada(frameEvt[15]), 
-        'evento_lido'           : eventoLido(frameEvt[15]),       
-        'info_evento'           : infoEvento(frameEvt[15],frameEvt[0])
-    }
+    if frame[5] + frame[6] == 116:
 
-    print (msgEvt)
+        # range Frame de Evento + cs
+        frameEvt = frame[9:-3]
+        msgEvt = {
+            'retorno': frame[7],
+            'total_dispositivos': frame[8],
+            'tipo_evt': tipoEvento(frameEvt[0]),
+            'setor': setor(frameEvt[0]),
+            'modo_operacao': modeOperacao(frameEvt[1]),
+            'numero_dispositivo': numeroDispositivo(frameEvt[1]),
+            't_disp_Anviz': tDispAnviz(frameEvt[2]),
+            'tipo_dispositivo': tipoDispositivo(frameEvt[2]),
+            'numero_serial': numeroSerial(frameEvt[3:7 + 1]),
+            'hora_data': horaData(frameEvt[8:13 + 1]),
+            'nivel': nivel(frameEvt[14]),
+            'bateria': bateria(frameEvt[15]),
+            'leitora_acionada': leitoraAcionada(frameEvt[15]),
+            'evento_lido': eventoLido(frameEvt[15]),
+            'info_evento': infoEvento(frameEvt[15], frameEvt[0])
+        }
 
-    return msgEvt
+        print(msgEvt)
+
+
+    else:
+        print("EVENTO %i DESCONHECIDO" % (frame[5] + frame[6]))
+
 
 def infoEvento(b_info_evt,b_tipo_evt):
     valor_evento = (b_tipo_evt & 0x1f)
-    valor_info_evento = convert.bits2int(b_info_evt,4,7)
-
+    valor_info_evento = convert.bits2int(b_info_evt,7,4)
+    print("b_info_evt",b_info_evt)
+    print("valor",valor_info_evento)
              
     lista_tipo_eventos= [
            [
@@ -134,6 +142,7 @@ def infoEvento(b_info_evt,b_tipo_evt):
             [   '14 SEM USO'],
 
             [
+                '',
                 'SUB_LOG_NAO_CADASTRADO',
                 'SUB_LOG_LEITORA_EXPEDIDORA'],
 
@@ -194,7 +203,7 @@ def eventoLido(byte):
         return 'evento já lido através de comando PC'
 
 def leitoraAcionada(byte):
-    leitora = convert.bits2int(byte,1,2) # bit1:2
+    leitora = convert.bits2int(byte,2,1) # bit2:1
 
     lista_leitora = [
         'leitora Acionada 01',
@@ -215,13 +224,10 @@ def bateria(byte):
         return 'bateria fraca'
         
 def nivel(byte):
-    pass
+    return byte
 
 def horaData(byte):
 
-
-
-    print(convert.fmtByte_to_Str(byte))
     hora        = byte[0]
     minuto      = byte[1]
     segundo     = byte[2]
@@ -231,22 +237,20 @@ def horaData(byte):
 
     return (
         "data: "+ 
-        str(convert.bcd2int(dia)) + "/" + 
-        str(convert.bcd2int(mes)) +"/"+ 
-        str(convert.bcd2int(ano))+" "+
-        str(convert.bcd2int(hora))+":"+
-        str(convert.bcd2int(minuto))
+        str(dia).zfill(2)       +   "/"   +
+        str(mes).zfill(2)       +   "/"   +
+        str(ano).zfill(2)       +   " "   +
+        str(hora).zfill(2)      +   ":"   +
+        str(minuto).zfill(2)    +   ":"   +
+        str(segundo).zfill(2)
     )
 
 
-
-
 def numeroSerial(byte):
-    return convert.fmtByte_to_Str(byte)   
-    #return byte     
+    return convert.fmtByte_to_Str(byte,separador='/')
 
 def tipoDispositivo(byte):
-    mask = 0x0F
+    mask = 0x0F #bits (baixa) 00001111
     valor = (byte & mask)
 
     lista_tipo_dispositivo = [
@@ -272,8 +276,8 @@ def tipoDispositivo(byte):
     return lista_tipo_dispositivo[valor]
 
 def tDispAnviz(byte):
-    mask = 0xF0 # bits Alta 11110000
-    valor = (byte & mask)
+    mask = 0xF0  # bits Alta 11110000
+    valor = (byte & mask) >> 4
 
     if valor == 3:
         return "CARTAO"
@@ -287,11 +291,12 @@ def tDispAnviz(byte):
 def numeroDispositivo(byte):
     #bits5:0
     valor = convert.bits2int(byte, 5, 0)
-    return valor
+
+    return valor + 1 # soma 1, Dispositivo começa apartir de 1
 
 def modeOperacao(byte):
     # bits6:7 ordem little
-    valor = convert.bits2int(byte, 6, 7)
+    valor = convert.bits2int(byte, 7, 6)
 
     lista_modo_operacao= [
         'MODO CATRACA',
@@ -336,30 +341,6 @@ def tipoEvento(byte):
 
 def setor(byte):
     # aplica mask 1110000 (0xE0), range bit7:bit5
-    valor = byte & 0xE0
+    valor = (byte & 0xE0) >> 5
 
-    return valor        
-
-
-
-
-    # partciona frame, pega o frame de evento
-    print("INICIO funcao EVENTO")
-    fbytes = fbytes[9:-3]
-    print(fbytes[0])
-    fevento = {
-        'tipo_evento': lista_tipo_eventos[int(convert.tobit(fbytes[0], 4, 0), 2)]
-    }
-
-    
-
-    
-    print("FIM funcao EVENTO")
-    return fevento
-
-
-print('-----')
-print('imprinmi data original :', data)
-#data=recebeMensagem(data)
-print("data transformadao payload ...", data)
-print(evento(data))
+    return valor + 1

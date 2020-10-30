@@ -24,7 +24,7 @@ def gravarDispositivo(serial,usuario):
     s1, s2 = serial.split('-')          # separa o prefixo 2 algarismo e o  sufixo 4 algarismo do serial
     s1 = int(s1).to_bytes(1, 'big')     #converte inteiro para byte
     s2 = int(s2).to_bytes(2, 'big')
-    serial = bytes.fromhex('00') +s1 + s2                    # concatena o prefixo e sufixo do serial, bytes
+    #serial = bytes.fromhex('00') +s1 + s2                    # concatena o prefixo e sufixo do serial, bytes
     serial = b'\x00\x00\x00' +s1 +s2
     print(serial.hex())
     payload.extend(serial)
@@ -44,7 +44,7 @@ def gravarDispositivo(serial,usuario):
     payload.append(16)
 
     # Byte 11 nivel
-    payload.append(2)
+    payload.append(255)
 
     # Byte 12 creditos
     payload.append(255)
@@ -65,9 +65,8 @@ def gravarDispositivo(serial,usuario):
 
     # preenhe o restante com 0x20 até o total do tamFrame
     for i in range(tamanho_frame - len(usuario)):
-        usuario = usuario + usuario.fromhex('20')
+        usuario += b'\x00'
 
-    print(usuario)
 
     payload.extend(usuario)
 
@@ -86,19 +85,12 @@ def gravarDispositivo(serial,usuario):
 
     payload.append(cs)
 
-    print("ANTES DE DE ENVIAR -=----")
-    print(len(payload))
-
     server.enviarComando(payload)
 
 
-
-gravarDispositivo('070-35082','TESTE1')
+gravarDispositivo('070-35082','KLEBER84')
 
 #fazer
 #trocar append por  == lista
 #verificar o len do serial, acescentar zero
 #testar
-
-
-

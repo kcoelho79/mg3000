@@ -1,6 +1,7 @@
 import socket
 import controladoraii as Controler
 import orchestrator
+import BitHandler as convert
 
 TCP_IP = '10.238.10.103'
 TCP_PORT = 9767
@@ -17,7 +18,7 @@ while 1:
     data = conn.recv(BUFFER_SIZE)
     if not data: 
         break
-    print ("received data:", data)
+    print ("received data:", convert.fmtByte_to_Str(data,separador=' '))
     #Controler.serializa_frame(data)
     orchestrator.evento(data)
 
