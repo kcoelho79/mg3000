@@ -1,3 +1,14 @@
+def calcula_checksum(frame):
+    # calcula checksum
+    print("Checksum -----")
+    cs = 0
+    for i in range(len(frame)):
+        cs = cs + frame[i]
+        print("posicao %i HEX %s soma= %i " % (i, hex(frame[i]), cs))
+    print("CS TOTAL =>", hex(cs))
+    cs = cs & 0xff0 >> 4
+    return cs
+
 def bit_from_string(string, index, msb= False ):
        i, j = divmod(index, 8)
       # print(i,j)
