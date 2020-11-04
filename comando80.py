@@ -6,7 +6,7 @@ import enviar as server
 #estrutura de dados
 
 
-def gravarDispositivo(serial,usuario):
+def gravarDispositivo(serial,usuario,visitante= False):
 
     payload  = bytearray()
     #tamanho
@@ -38,7 +38,11 @@ def gravarDispositivo(serial,usuario):
     payload.append(0)
 
     # Byte 9 flagsCadastro
-    payload.append(0)
+    if visitante:
+        payload.append(3)
+    else:
+        payload.append(0)
+
 
     # Byte 10 flagsStatus
     payload.append(16)
@@ -88,7 +92,7 @@ def gravarDispositivo(serial,usuario):
     server.enviarComando(payload)
 
 
-gravarDispositivo('070-35082','KLEBER84')
+gravarDispositivo('070-35082','KLEBER84',visitante = True )
 
 #fazer
 #trocar append por  == lista

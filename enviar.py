@@ -7,10 +7,14 @@ def enviarComando(payload):
     rodape = b'ETX'
     frame = cabecalho + payload +rodape
 
+    # add cabecalho + payload = com isso faco a soma do checksum, add checksum + rodape
+
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((TCP_IP, TCP_PORT))
     print("tamanho   :",len(frame))
     print("ENVIANDO  :", frame)
+
+
     print("ENVIANDO HEX  :", convert.fmtByte_to_Str(frame))
     s.send(frame)
     data = s.recv(BUFFER_SIZE)

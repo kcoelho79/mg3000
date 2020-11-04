@@ -1,70 +1,34 @@
 import BitHandler as convert
 
-# open connect to controllerII
-#import server
-
-# abre conexao
-# recebe comando
-#
-
-# original
-#data = b'STX\x00\x15\x00t\x00(\x11\x00\x03\x00\x00F\x89\n\t\x13\x06\x02\x01\x00\x00T\x02ETX'
-
-#data =  b'STX\x00\x15\x00t\x00(\x11\x00\x03\x00\x00F\x89\n\x15\t\x1b\x04\x01\x00\x00P\x17ETX'
-
-data = b'STX\x00\x15\x00t\x00(\x11\x00\x03\x00\x00F\x89\n\x15\x11\x0f\x04\x01\x00\x00R\x15ETX'
-
-
-def recebeMensagem(fbytes):
-    #particiona fbytes
-    cabecalho = fbytes[0:2]
-    comando = fbytes[5:6]
-    tamanho_fbytes_msg = fbytes[3] + fbytes[4]
-    # convert.Byte_to_Hex(payload)
-    return payload
 
 def evento(frame):
 
-    if frame[5] + frame[6] == 116:
+    # estrutuda de dados
+    frameEvt = frame[9:-3]
+    msgEvt = {
+        'tipo_evt'              : tipoEvento(frameEvt[0]),
+        'setor'                 : setor(frameEvt[0]),
+        'modo_operacao'         : modeOperacao(frameEvt[1]),
+        'numero_dispositivo'    : numeroDispositivo(frameEvt[1]),
+        't_disp_Anviz'          : tDispAnviz(frameEvt[2]),
+        'tipo_dispositivo'      : tipoDispositivo(frameEvt[2]),
+        'numero_serial'         : numeroSerial(frameEvt[3:7+1]),
+        'hora_data'             : horaData(frameEvt[8:13+1]),
+        'nivel'                 : nivel(frameEvt[14]),
+        'bateria'               : bateria(frameEvt[15]),
+        'leitora_acionada'      : leitoraAcionada(frameEvt[15]),
+        'evento_lido'           : eventoLido(frameEvt[15]),
+        'info_evento'           : infoEvento(frameEvt[15],frameEvt[0])
+    }
 
-        # range Frame de Evento + cs
-        frameEvt = frame[9:-3]
-        msgEvt = {
-            'retorno': frame[7],
-            'total_dispositivos': frame[8],
-            'tipo_evt': tipoEvento(frameEvt[0]),
-            'setor': setor(frameEvt[0]),
-            'modo_operacao': modeOperacao(frameEvt[1]),
-            'numero_dispositivo': numeroDispositivo(frameEvt[1]),
-            't_disp_Anviz': tDispAnviz(frameEvt[2]),
-            'tipo_dispositivo': tipoDispositivo(frameEvt[2]),
-            'numero_serial': numeroSerial(frameEvt[3:7 + 1]),
-            'hora_data': horaData(frameEvt[8:13 + 1]),
-            'nivel': nivel(frameEvt[14]),
-            'bateria': bateria(frameEvt[15]),
-            'leitora_acionada': leitoraAcionada(frameEvt[15]),
-            'evento_lido': eventoLido(frameEvt[15]),
-            'info_evento': infoEvento(frameEvt[15], frameEvt[0])
-        }
+    print (msgEvt)
 
-        print(msgEvt)
-
-
-        if msgEvt['numero_serial'] == '000046890a':
-            print("==>> ABRIR PORTAO <<== ")
-        else:
-            print("==>> ACIONAMENTO NAO AUTORIZADO <<==")
-
-
-    else:
-        print("EVENTO %i DESCONHECIDO" % (frame[5] + frame[6]))
-
+    return msgEvt
 
 def infoEvento(b_info_evt,b_tipo_evt):
     valor_evento = (b_tipo_evt & 0x1f)
-    valor_info_evento = convert.bits2int(b_info_evt,7,4)
-    print("b_info_evt",b_info_evt)
-    print("valor",valor_info_evento)
+    valor_info_evento = convert.bits2int(b_info_evt,4,7)
+
              
     lista_tipo_eventos= [
            [
@@ -142,17 +106,11 @@ def infoEvento(b_info_evt,b_tipo_evt):
                 'SUB_LOG_ATUALIZAÇÃO_CANCELADA_ERROS'
                 ],
 
-            [
-                '0',
-                '1',
-                '2',
-                'SUB_LOG_BACKUP_AUTO_SETUP_OK'
-            ],
+            [   '13 SEM USO'],
 
             [   '14 SEM USO'],
 
             [
-                '',
                 'SUB_LOG_NAO_CADASTRADO',
                 'SUB_LOG_LEITORA_EXPEDIDORA'],
 
@@ -204,8 +162,6 @@ def infoEvento(b_info_evt,b_tipo_evt):
             ]
 
         ]
-
-
     return lista_tipo_eventos[valor_evento][valor_info_evento]
 
 def eventoLido(byte):
@@ -215,7 +171,7 @@ def eventoLido(byte):
         return 'evento já lido através de comando PC'
 
 def leitoraAcionada(byte):
-    leitora = convert.bits2int(byte,2,1) # bit2:1
+    leitora = convert.bits2int(byte,1,2) # bit1:2
 
     lista_leitora = [
         'leitora Acionada 01',
@@ -236,10 +192,13 @@ def bateria(byte):
         return 'bateria fraca'
         
 def nivel(byte):
-    return byte
+    pass
 
 def horaData(byte):
 
+
+
+    print(convert.fmtByte_to_Str(byte))
     hora        = byte[0]
     minuto      = byte[1]
     segundo     = byte[2]
@@ -249,20 +208,22 @@ def horaData(byte):
 
     return (
         "data: "+ 
-        str(dia).zfill(2)       +   "/"   +
-        str(mes).zfill(2)       +   "/"   +
-        str(ano).zfill(2)       +   " "   +
-        str(hora).zfill(2)      +   ":"   +
-        str(minuto).zfill(2)    +   ":"   +
-        str(segundo).zfill(2)
+        str(convert.bcd2int(dia)) + "/" + 
+        str(convert.bcd2int(mes)) +"/"+ 
+        str(convert.bcd2int(ano))+" "+
+        str(convert.bcd2int(hora))+":"+
+        str(convert.bcd2int(minuto))
     )
 
 
+
+
 def numeroSerial(byte):
-    return convert.fmtByte_to_Str(byte,separador='')
+    return convert.fmtByte_to_Str(byte)   
+    #return byte     
 
 def tipoDispositivo(byte):
-    mask = 0x0F #bits (baixa) 00001111
+    mask = 0x0F
     valor = (byte & mask)
 
     lista_tipo_dispositivo = [
@@ -288,8 +249,8 @@ def tipoDispositivo(byte):
     return lista_tipo_dispositivo[valor]
 
 def tDispAnviz(byte):
-    mask = 0xF0  # bits Alta 11110000
-    valor = (byte & mask) >> 4
+    mask = 0xF0 # bits Alta 11110000
+    valor = (byte & mask)
 
     if valor == 3:
         return "CARTAO"
@@ -303,18 +264,16 @@ def tDispAnviz(byte):
 def numeroDispositivo(byte):
     #bits5:0
     valor = convert.bits2int(byte, 5, 0)
-
-    return valor + 1 # soma 1, Dispositivo começa apartir de 1
+    return valor
 
 def modeOperacao(byte):
     # bits6:7 ordem little
-    valor = convert.bits2int(byte, 7, 6)
+    valor = convert.bits2int(byte, 6, 7)
 
     lista_modo_operacao= [
         'MODO CATRACA',
         'MODO PORTA',
-        'MODO CANCELA',
-        'MODO TESTE'
+        'MODO CANCELA'
     ]
    
     return lista_modo_operacao[valor]
@@ -354,6 +313,30 @@ def tipoEvento(byte):
 
 def setor(byte):
     # aplica mask 1110000 (0xE0), range bit7:bit5
-    valor = (byte & 0xE0) >> 5
+    valor = byte & 0xE0
 
-    return valor + 1
+    return valor        
+
+
+
+
+    # partciona frame, pega o frame de evento
+    print("INICIO funcao EVENTO")
+    fbytes = fbytes[9:-3]
+    print(fbytes[0])
+    fevento = {
+        'tipo_evento': lista_tipo_eventos[int(convert.tobit(fbytes[0], 4, 0), 2)]
+    }
+
+    
+
+    
+    print("FIM funcao EVENTO")
+    return fevento
+
+
+print('-----')
+print('imprinmi data original :', data)
+#data=recebeMensagem(data)
+print("data transformadao payload ...", data)
+print(evento(data))
