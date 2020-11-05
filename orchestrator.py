@@ -1,4 +1,5 @@
 import BitHandler as convert
+import comando80 as PC
 
 # open connect to controllerII
 #import server
@@ -47,25 +48,37 @@ def evento(frame):
             'info_evento': infoEvento(frameEvt[15], frameEvt[0])
         }
 
-        print(msgEvt)
 
+        print('========= MENSAGEM EVENTO =========')
+        print('== DATA    :', msgEvt['hora_data'])
+        print('== Serial  :', msgEvt['numero_serial'])
+        print('== Leitora :', msgEvt['leitora_acionada'])
+        print('== retorno :', msgEvt['retorno'])
+        print('== Evento  :', msgEvt['tipo_evt'])
+        print('== Evento  :', msgEvt['info_evento'])
+        print('eventolido :', msgEvt['evento_lido'])
+        print('===========FIM MENSAGEM ===========')
+        print('')
 
-        if msgEvt['numero_serial'] == '000046890a':
-            print("==>> ABRIR PORTAO <<== ")
-        else:
-            print("==>> ACIONAMENTO NAO AUTORIZADO <<==")
+        #print(msgEvt)
+        if msgEvt['info_evento'] == 'SUB_LOG_ACIONAMENTO_ENTRADA':
+            if  msgEvt['numero_serial'] == '000046890a' :
+                print("==>> ABRIR PORTAO <<== ")
+                #PC.acionamento(0,9,3)
+                PC.acionamentoIdentificacao(0,9,3,msgEvt['numero_serial'])
+            else:
+                print("==>> ENTRADA NAO AUTORIZADO <<==")
+
 
 
     else:
-        print("EVENTO %i DESCONHECIDO" % (frame[5] + frame[6]))
+        print("RETORNO COMANDO PC %i NAO CADASTRADO" % (frame[5] + frame[6]))
 
 
 def infoEvento(b_info_evt,b_tipo_evt):
     valor_evento = (b_tipo_evt & 0x1f)
     valor_info_evento = convert.bits2int(b_info_evt,7,4)
-    print("b_info_evt",b_info_evt)
-    print("valor",valor_info_evento)
-             
+
     lista_tipo_eventos= [
            [
                 'SUB_LOG_ACIONAMENTO_ENTRADA',

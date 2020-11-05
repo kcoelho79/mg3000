@@ -5,12 +5,96 @@ import enviar as server
 
 #estrutura de dados
 
+def msgRetorno(b):
+    lista = [
+        'OK (Sucesso)',
+        'memoria cheia',
+        'dispositivo cadastrado',
+        'sem mais eventos',
+        'fim do arquivo',
+        'estouro do buffer interno',
+        'conflito de portas',
+        'erro no tamanho do pacote',
+        'erro de checksum',
+        'erro modo de operaçao',
+        'erro escrita/leitura',
+        'erro fora do limite do dispositivo',
+        'erro tipo diferente',
+        'erro operacao invalida',
+        'erro dispositivo diferente',
+        'erro indice invalido',
+        'erro de sintaxe',
+        'erro valor invalidado',
+        'erro serial invalido',
+        'erro setor diferente',
+        'erro endereço diferente',
+        'erro biometria 1 sucesso biometria 2',
+        'erro biometria 2 sucesso biometria 1',
+        'erro biometria 1 e 2'
+    ]
+
+    return lista[b]
+
+#comando 0x0075 Acionamento
+def acionamento(dispositivo,endplaca,saida):
+    print('comando Acionamento')
+
+    payload = bytearray()
+    comando = b'\x00\x75'
+
+    payload.extend(comando)
+    payload.append(dispositivo)
+    payload.append(endplaca)
+    payload.append(saida)
+    cs = convert.calcula_checksum(payload)
+    payload.append(cs)
+
+    bretorno = server.enviarComando(payload)
+
+    print(msgRetorno(bretorno[7]))
+    return msgRetorno(bretorno[7])
+
+
+def acionamentoIdentificacao(dispositivo,endplaca,saida,serial):
+    print('comando Acionamento com Identificação')
+
+    payload = bytearray()
+    comando = b'\x00\x84'
+
+    payload.extend(comando)
+    payload.append(dispositivo)
+    payload.append(endplaca)
+    payload.append(saida)
+
+    #tipo dispositivo
+    payload.append(3)
+
+    # byte serial
+    payload.append(0)
+    payload.extend(bytearray.fromhex(serial))
+
+    # Byte flagsCadastro
+    payload.append(0)
+
+    # Byte  nivel
+    payload.append(1)
+
+    # Byte origemAcionamento
+    payload.append(1)
+
+    # Byte Checksum
+    cs = convert.calcula_checksum(payload)
+    payload.append(cs)
+
+    bretorno = server.enviarComando(payload)
+
+    print('RETORNO COMANDO 132 :',bretorno)
 
 def gravarDispositivo(serial,usuario,visitante= False):
 
     payload  = bytearray()
     #tamanho
-    payload += b'\x00\x24'
+    # payload += b'\x00\x24'
     #comando
     payload += b'\x00\x50'
 
@@ -28,8 +112,6 @@ def gravarDispositivo(serial,usuario,visitante= False):
     serial = b'\x00\x00\x00' +s1 +s2
     print(serial.hex())
     payload.extend(serial)
-
-    print(payload)
 
     # Byte 7 codHAB(High)
     payload.append(0)
@@ -67,7 +149,6 @@ def gravarDispositivo(serial,usuario,visitante= False):
     tamanho_frame = 14
     usuario = str.encode(usuario) # converte str para bytes
 
-    # preenhe o restante com 0x20 até o total do tamFrame
     for i in range(tamanho_frame - len(usuario)):
         usuario += b'\x00'
 
@@ -75,24 +156,15 @@ def gravarDispositivo(serial,usuario,visitante= False):
     payload.extend(usuario)
 
     # calcula checksum
-    print("Checksum -----")
-    range_cs = payload[2:]
-    print(convert.fmtByte_to_Str(range_cs))
-    cs = 0
-    for i in range(len(range_cs)):
-        cs = cs + range_cs[i]
-        print("posicao %i HEX %s soma= %i " %(i, hex(range_cs[i]), cs))
-
-    print("CS TOTAL =>",hex(cs))
-
-    cs = cs & 0xff0 >> 4
+    cs = convert.calcula_checksum(payload)
 
     payload.append(cs)
 
     server.enviarComando(payload)
 
 
-gravarDispositivo('070-35082','KLEBER84',visitante = True )
+#gravarDispositivo('070-35082','KLEBER84',visitante = True )
+# print( convert.fmtByte_to_Str(acionamento(0,9,3),separador=' '))
 
 #fazer
 #trocar append por  == lista

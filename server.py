@@ -18,7 +18,7 @@ while 1:
     data = conn.recv(BUFFER_SIZE)
     if not data: 
         break
-    print ("received data:", convert.fmtByte_to_Str(data,separador=' '))
+    #print ("received data:", convert.fmtByte_to_Str(data,separador=' '))
     #Controler.serializa_frame(data)
     orchestrator.evento(data)
 
